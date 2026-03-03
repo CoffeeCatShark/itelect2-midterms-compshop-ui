@@ -12,6 +12,7 @@ export const INITIAL_SERVICES = [
   { serviceIndex: 5, serviceId: 104, serviceType: "Passport Booking" },
   { serviceIndex: 6, serviceId: 103, serviceType: "Computer Rental" },
   { serviceIndex: 7, serviceId: 105, serviceType: "NBI Clearance" },
+  { serviceIndex: 8, serviceId: 106, serviceType: "Philippine Statistics Authority Appointment" },
 ];
 
 export const INITIAL_REQUESTS = [
@@ -20,7 +21,8 @@ export const INITIAL_REQUESTS = [
 ];
 
 export const INITIAL_ACTIVE = [
-  { activeIndex: 21, requestId: 51 },
+  { activeIndex: 21, requestId: 50 },
+  { activeIndex: 22, requestId: 51 },
 ];
 
 export const TIME_SLOTS = [

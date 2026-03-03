@@ -55,7 +55,7 @@ export default function AuthPage({ users, setUsers, onLogin }) {
         <div className="demo-note">
           <strong>Demo credentials:</strong><br />
           Admin: <code>firstadmin</code> / <code>admin123</code><br />
-          Employee: <code>VictorBatongBakal</code> / <code>emp123</code>
+          Employee: <code>employee1</code> / <code>emp123</code>
         </div>
 
         {mode === "login" ? (

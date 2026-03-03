@@ -6,7 +6,7 @@ import { useState } from "react";
 import { TIME_SLOTS } from "../data/initialData";
 import { genId, getServiceIcon } from "../utils/helpers";
 
-export default function CustomerUI({ services, requests, setRequests, active }) {
+export default function CustomerUI({ services, requests, setRequests, active, setActive }) {
   const [view, setView]                   = useState("list"); // "list" | "reserve" | "confirm"
   const [selectedService, setSelectedService] = useState(null);
   const [form, setForm]                   = useState({ name: "", date: "", time: "" });
@@ -51,6 +51,7 @@ export default function CustomerUI({ services, requests, setRequests, active }) 
       fileUpload:   null,
     };
     setRequests((prev) => [...prev, newReq]);
+    setActive((prev) => [...prev, { activeIndex: genId(), requestId: newReq.requestId }]);
     setView("confirm");
   };
 

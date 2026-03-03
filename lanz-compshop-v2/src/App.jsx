@@ -47,6 +47,7 @@ export default function App() {
             requests={requests}
             setRequests={setRequests}
             active={active}
+            setActive={setActive}
           />
           {/* Floating button to return to staff login */}
           <div style={{ position: "fixed", bottom: 20, right: 20, zIndex: 100 }}>
