@@ -1,7 +1,12 @@
 // ─── SHARED UTILITY HELPERS ───────────────────────────────────────────────────
 
 let nextId = 100;
-export const genId = () => ++nextId;
+export const genId = () => {
+  const current = parseInt(localStorage.getItem("cs_next_id") || "100");
+  const next = current + 1;
+  localStorage.setItem("cs_next_id", next);
+  return next;
+};
 
 export const formatTime = (ts) =>
   new Date(ts).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" });

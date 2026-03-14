@@ -1,8 +1,10 @@
 // App.jsx
 // Root component. Owns all shared state and decides which top-level
 // view to render: auth login, customer portal, or staff dashboard.
-
+localStorage.setItem("test", "working");
 import { useState } from "react";
+
+import { useLocalStorage } from "./utils/useLocalStorage";
 import globalCss from "./styles/globalStyles";
 import { INITIAL_USERS, INITIAL_SERVICES, INITIAL_REQUESTS, INITIAL_ACTIVE } from "./data/initialData";
 
@@ -18,10 +20,10 @@ const MODE_APP      = "app";
 
 export default function App() {
   // ── Shared data state (single source of truth) ──────────────────────────
-  const [users,    setUsers]    = useState(INITIAL_USERS);
-  const [services, setServices] = useState(INITIAL_SERVICES);
-  const [requests, setRequests] = useState(INITIAL_REQUESTS);
-  const [active,   setActive]   = useState(INITIAL_ACTIVE);
+  const [users,    setUsers]    = useLocalStorage("cs_users",    INITIAL_USERS);
+  const [services, setServices] = useLocalStorage("cs_services", INITIAL_SERVICES);
+  const [requests, setRequests] = useLocalStorage("cs_requests", INITIAL_REQUESTS);
+  const [active,   setActive]   = useLocalStorage("cs_active",   INITIAL_ACTIVE);
 
   // ── Session / routing state ─────────────────────────────────────────────
   const [mode,    setMode]    = useState(MODE_AUTH);
