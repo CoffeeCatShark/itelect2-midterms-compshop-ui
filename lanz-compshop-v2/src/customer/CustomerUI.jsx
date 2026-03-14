@@ -167,6 +167,7 @@ export default function CustomerUI({ services, requests, setRequests, active, se
               />
             </div>
 
+
             <div className="form-actions">
               <button className="btn btn-primary" onClick={handleReserve}>
                 ✅ Confirm Reservation
