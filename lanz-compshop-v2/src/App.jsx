@@ -1,7 +1,6 @@
 // App.jsx
 // Root component. Owns all shared state and decides which top-level
 // view to render: auth login, customer portal, or staff dashboard.
-localStorage.setItem("test", "working");
 import { useState } from "react";
 
 import { useLocalStorage } from "./utils/useLocalStorage";
