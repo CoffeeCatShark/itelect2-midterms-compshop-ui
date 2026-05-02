@@ -1,7 +1,7 @@
 // staff/auth/AuthPage.jsx
 // Login and registration page for admin / employee staff accounts.
 // First registrant automatically becomes an admin.
-
+import axios from 'axios'
 import { useState } from "react";
 import { genId } from "../../utils/helpers";
 
@@ -22,24 +22,27 @@ export default function AuthPage({ users, setUsers, onLogin }) {
   };
 
   const handleRegister = () => {
-    setError("");
-    if (form.password.length < 8)           { setError("Password must be at least 8 characters."); return; }
-    if (form.password !== form.retypePassword) { setError("Passwords do not match."); return; }
-    if (users.find((u) => u.username === form.username)) { setError("Username already taken."); return; }
-    if (users.find((u) => u.email === form.email))       { setError("Email already registered."); return; }
+  setError("");
+  if (form.password.length < 8)              { setError("Password must be at least 8 characters."); return; }
+  if (form.password !== form.retypePassword) { setError("Passwords do not match."); return; }
+  if (users.find(u => u.username === form.username)) { setError("Username already taken."); return; }
+  if (users.find(u => u.email === form.email))       { setError("Email already registered."); return; }
 
-    const newUser = {
-      id: genId(),
-      username: form.username,
-      email: form.email,
-      password: form.password,
-      role: users.length === 0 ? "admin" : "employee", // first user becomes admin
-      createdAt: new Date().toISOString(),
-    };
-
-    setUsers((prev) => [...prev, newUser]);
-    onLogin(newUser);
+  const newUser = {
+    username: form.username,
+    email: form.email,
+    password: form.password,
+    role: users.length === 0 ? "admin" : "employee",
+    createdAt: new Date().toISOString(),
   };
+
+  axios.post('http://localhost:3000/users', newUser)
+    .then(res => {
+      setUsers(prev => [...prev, res.data]);
+      onLogin(res.data);
+    })
+    .catch(err => console.log(err))
+};
 
   const switchMode = (next) => { setMode(next); setError(""); };
 

@@ -1,7 +1,7 @@
 // staff/admin/ManageRoles.jsx
 // Lists all employee accounts and allows an admin to promote
 // any of them to the "admin" role.
-
+import axios from 'axios'
 import { useState } from "react";
 import ConfirmModal from "../../components/ConfirmModal";
 import { formatDate } from "../../utils/helpers";
@@ -12,11 +12,15 @@ export default function ManageRoles({ users, setUsers }) {
 
   const employees = users.filter((u) => u.role === "employee");
 
-  const promote = (u) => {
-    setUsers((prev) => prev.map((x) => (x.id === u.id ? { ...x, role: "admin" } : x)));
-    setAlert({ type: "success", msg: `${u.username} has been promoted to Admin.` });
-    setConfirm(null);
-  };
+ const promote = (u) => {
+  axios.put(`http://localhost:3000/users/${u.id}`, { ...u, role: "admin" })
+    .then(res => {
+      setUsers(prev => prev.map(x => x.id === res.data.id ? res.data : x));
+      setAlert({ type: "success", msg: `${u.username} has been promoted to Admin.` });
+      setConfirm(null);
+    })
+    .catch(err => console.log(err))
+};
 
   return (
     <>

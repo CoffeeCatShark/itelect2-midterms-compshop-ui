@@ -1,7 +1,7 @@
 // staff/admin/DeleteEmployee.jsx
 // Allows an admin to permanently delete employee accounts.
 // Admins cannot delete other admins or their own account.
-
+import axios from 'axios'
 import { useState } from "react";
 import ConfirmModal from "../../components/ConfirmModal";
 import { formatDate } from "../../utils/helpers";
@@ -12,16 +12,15 @@ export default function DeleteEmployee({ users, setUsers, currentUser }) {
 
   const employees = users.filter((u) => u.role === "employee");
 
-  const deleteUser = (u) => {
-    if (u.id === currentUser.id) {
-      setAlert({ type: "error", msg: "You cannot delete your own account!" });
+ const deleteUser = (u) => {
+  axios.delete(`http://localhost:3000/users/${u.id}`)
+    .then(() => {
+      setUsers(prev => prev.filter(x => x.id !== u.id));
+      setAlert({ type: "success", msg: `Employee "${u.username}" has been deleted.` });
       setConfirm(null);
-      return;
-    }
-    setUsers((prev) => prev.filter((x) => x.id !== u.id));
-    setAlert({ type: "success", msg: `Employee "${u.username}" has been deleted.` });
-    setConfirm(null);
-  };
+    })
+    .catch(err => console.log(err))
+};
 
   return (
     <>

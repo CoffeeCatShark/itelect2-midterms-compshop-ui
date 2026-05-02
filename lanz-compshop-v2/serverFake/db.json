@@ -1,0 +1,178 @@
+{
+  "users": [
+    {
+      "id": "1",
+      "username": "firstadmin",
+      "email": "davesales27@gmail.com",
+      "password": "admin123",
+      "role": "admin",
+      "createdAt": "2025-05-16T01:18:04"
+    },
+    {
+      "id": "2",
+      "username": "TitoBadang",
+      "email": "ziobeppe82@gmail.com",
+      "password": "admin123",
+      "role": "admin",
+      "createdAt": "2025-05-16T06:36:38"
+    },
+    {
+      "id": "3",
+      "username": "employee1",
+      "email": "ewan@gmail.com",
+      "password": "emp123",
+      "role": "employee",
+      "createdAt": "2025-05-16T09:42:10"
+    }
+  ],
+  "services": [
+    {
+      "id": "4",
+      "serviceId": 102,
+      "serviceType": "Typing Job"
+    },
+    {
+      "id": "5",
+      "serviceId": 101,
+      "serviceType": "Printing"
+    },
+    {
+      "id": "6",
+      "serviceId": 104,
+      "serviceType": "Passport Booking"
+    },
+    {
+      "id": "7",
+      "serviceId": 103,
+      "serviceType": "Computer Rental"
+    },
+    {
+      "id": "8",
+      "serviceId": 105,
+      "serviceType": "NBI Clearance"
+    },
+    {
+      "id": "9",
+      "serviceId": 106,
+      "serviceType": "Philippine Statistics Authority Appointment"
+    }
+  ],
+  "requests": [
+    {
+      "id": "50",
+      "requestId": 50,
+      "serviceType": "Printing",
+      "customerName": "John Dela Cruz",
+      "timestamp": "2025-05-25T14:00:00",
+      "fileUpload": null
+    },
+    {
+      "id": "51",
+      "requestId": 51,
+      "serviceType": "Typing Job",
+      "customerName": "Maria Santos",
+      "timestamp": "2025-05-25T15:30:00",
+      "fileUpload": null
+    },
+    {
+      "serviceType": "asd",
+      "customerName": "123123",
+      "timestamp": "2026-03-28T12:00:00",
+      "fileUpload": null,
+      "id": "oquOfJZu7Cg"
+    },
+    {
+      "serviceType": "Printing",
+      "customerName": "asd",
+      "timestamp": "2026-03-28T12:30:00",
+      "fileUpload": null,
+      "id": "us922MCKMgE"
+    }
+  ],
+  "active": [
+    {
+      "id": "21",
+      "requestId": 50
+    },
+    {
+      "id": "22",
+      "requestId": 51
+    },
+    {
+      "requestId": "oquOfJZu7Cg",
+      "id": "euBtPpEjyvw"
+    },
+    {
+      "requestId": "us922MCKMgE",
+      "id": "vu-yDrI_TCk"
+    }
+  ],
+  "timeSlots": [
+    {
+      "value": "12:00",
+      "label": "12:00 PM",
+      "id": "oljdz_kPG3g"
+    },
+    {
+      "value": "12:30",
+      "label": "12:30 PM",
+      "id": "1dQlnr0-8wA"
+    },
+    {
+      "value": "13:00",
+      "label": "1:00 PM",
+      "id": "gHLnFGOROhg"
+    },
+    {
+      "value": "13:30",
+      "label": "1:30 PM",
+      "id": "9BzVa7zR6LA"
+    },
+    {
+      "value": "14:00",
+      "label": "2:00 PM",
+      "id": "VW_V9rebL5o"
+    },
+    {
+      "value": "14:30",
+      "label": "2:30 PM",
+      "id": "MNweqjbgqoQ"
+    },
+    {
+      "value": "15:00",
+      "label": "3:00 PM",
+      "id": "iAirVvG4LGE"
+    },
+    {
+      "value": "15:30",
+      "label": "3:30 PM",
+      "id": "ZGnpRJUx4ZI"
+    },
+    {
+      "value": "16:00",
+      "label": "4:00 PM",
+      "id": "p52uiR9DVr4"
+    },
+    {
+      "value": "16:30",
+      "label": "4:30 PM",
+      "id": "lGXI3VEOb8Q"
+    },
+    {
+      "value": "17:00",
+      "label": "5:00 PM",
+      "id": "f5pypIVxZuY"
+    },
+    {
+      "value": "17:30",
+      "label": "5:30 PM",
+      "id": "tJ6tPAe1Vyc"
+    },
+    {
+      "value": "18:00",
+      "label": "6:00 PM",
+      "id": "TU2lE458c0s"
+    }
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
+}

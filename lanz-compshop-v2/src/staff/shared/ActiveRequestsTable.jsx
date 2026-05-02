@@ -1,7 +1,6 @@
 // staff/shared/ActiveRequestsTable.jsx
 // Displays requests that are currently marked active.
 // Used in both the Admin "Active Table Display" and the Employee dashboard.
-
 import { useState } from "react";
 import ConfirmModal from "../../components/ConfirmModal";
 import { formatTime, formatDate } from "../../utils/helpers";
@@ -17,7 +16,7 @@ export default function ActiveRequestsTable({
 
   const activeRows = active
     .map((a) => {
-      const req = requests.find((r) => r.requestId === a.requestId);
+      const req = requests.find((r) => r.id === a.requestId);
       return req ? { ...req, activeIndex: a.activeIndex } : null;
     })
     .filter(Boolean)

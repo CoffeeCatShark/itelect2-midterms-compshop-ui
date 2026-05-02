@@ -1,23 +1,21 @@
 // customer/CustomerUI.jsx
-// Public-facing portal where customers browse services and make reservations.
-// No login required.
-
 import { useState } from "react";
+import axios from "axios";                        // ← add this
 import { TIME_SLOTS } from "../data/initialData";
-import { genId, getServiceIcon } from "../utils/helpers";
+import { getServiceIcon } from "../utils/helpers"; // ← remove genId, no longer needed
 
 export default function CustomerUI({ services, requests, setRequests, active, setActive }) {
-  const [view, setView]                   = useState("list"); // "list" | "reserve" | "confirm"
+  const [view, setView]                       = useState("list");
   const [selectedService, setSelectedService] = useState(null);
-  const [form, setForm]                   = useState({ name: "", date: "", time: "" });
-  const [formError, setFormError]         = useState("");
+  const [form, setForm]                       = useState({ name: "", date: "", time: "" });
+  const [formError, setFormError]             = useState("");
 
   const today = new Date().toISOString().split("T")[0];
 
-  // Build a list of already-reserved {date, time} pairs from active requests
+  // Build reserved slots from active requests
   const reservedSlots = active
     .map((a) => {
-      const req = requests.find((r) => r.requestId === a.requestId);
+      const req = requests.find((r) => r.id === a.requestId); // ← r.requestId → r.id
       return req
         ? { date: req.timestamp.split("T")[0], time: req.timestamp.split("T")[1]?.slice(0, 5) }
         : null;
@@ -27,7 +25,6 @@ export default function CustomerUI({ services, requests, setRequests, active, se
   const isReserved = (date, time) =>
     reservedSlots.some((r) => r.date === date && r.time === time);
 
-  // ── Handlers ──────────────────────────────────────────────────────────────
   const selectService = (s) => {
     setSelectedService(s);
     setForm({ name: "", date: "", time: "" });
@@ -37,22 +34,27 @@ export default function CustomerUI({ services, requests, setRequests, active, se
 
   const handleReserve = () => {
     setFormError("");
-    if (!form.name.trim())  { setFormError("Please enter your full name.");   return; }
-    if (!form.date)         { setFormError("Please select a date.");          return; }
-    if (!form.time)         { setFormError("Please select a time slot.");     return; }
+    if (!form.name.trim()) { setFormError("Please enter your full name."); return; }
+    if (!form.date)        { setFormError("Please select a date.");        return; }
+    if (!form.time)        { setFormError("Please select a time slot.");   return; }
 
-    const ts     = `${form.date}T${form.time}:00`;
     const newReq = {
-      requestIndex: genId(),
-      requestId:    genId(),
       serviceType:  selectedService.serviceType,
       customerName: form.name.trim(),
-      timestamp:    ts,
+      timestamp:    `${form.date}T${form.time}:00`,
       fileUpload:   null,
     };
-    setRequests((prev) => [...prev, newReq]);
-    setActive((prev) => [...prev, { activeIndex: genId(), requestId: newReq.requestId }]);
-    setView("confirm");
+
+    axios.post('http://localhost:3000/requests', newReq)
+      .then(res => {
+        setRequests(prev => [...prev, res.data]);
+        return axios.post('http://localhost:3000/active', { requestId: res.data.id });
+      })
+      .then(res => {
+        setActive(prev => [...prev, res.data]);
+        setView("confirm");
+      })
+      .catch(err => console.log(err))
   };
 
   const resetToList = () => {
@@ -103,7 +105,6 @@ export default function CustomerUI({ services, requests, setRequests, active, se
           {formError && <div className="alert alert-error">{formError}</div>}
 
           <div className="form-card" style={{ maxWidth: "100%" }}>
-            {/* Full Name */}
             <div className="form-group">
               <label className="form-label">👤 Full Name</label>
               <input
@@ -114,7 +115,6 @@ export default function CustomerUI({ services, requests, setRequests, active, se
               />
             </div>
 
-            {/* Date */}
             <div className="form-group">
               <label className="form-label">📅 Select Date</label>
               <input
@@ -126,7 +126,6 @@ export default function CustomerUI({ services, requests, setRequests, active, se
               />
             </div>
 
-            {/* Time Slots */}
             <div className="form-group">
               <label className="form-label">
                 🕐 Select Time Slot{" "}
@@ -141,11 +140,7 @@ export default function CustomerUI({ services, requests, setRequests, active, se
                   return (
                     <button
                       key={t.value}
-                      className={[
-                        "time-slot-btn",
-                        selected ? "selected" : "",
-                        reserved ? "reserved" : "",
-                      ].join(" ")}
+                      className={["time-slot-btn", selected ? "selected" : "", reserved ? "reserved" : ""].join(" ")}
                       onClick={() => !reserved && setForm((p) => ({ ...p, time: t.value }))}
                     >
                       {t.label}
@@ -156,7 +151,6 @@ export default function CustomerUI({ services, requests, setRequests, active, se
               </div>
             </div>
 
-            {/* Service Type (read-only) */}
             <div className="form-group">
               <label className="form-label">⚙️ Service Type</label>
               <input
@@ -166,7 +160,6 @@ export default function CustomerUI({ services, requests, setRequests, active, se
                 style={{ opacity: 0.7 }}
               />
             </div>
-
 
             <div className="form-actions">
               <button className="btn btn-primary" onClick={handleReserve}>
@@ -198,10 +191,10 @@ export default function CustomerUI({ services, requests, setRequests, active, se
       ) : (
         <div className="service-grid">
           {services.map((s) => (
-            <div className="service-card" key={s.serviceIndex} onClick={() => selectService(s)}>
+            <div className="service-card" key={s.id} onClick={() => selectService(s)}>  {/* ← s.serviceIndex → s.id */}
               <div className="svc-icon">{getServiceIcon(s.serviceType)}</div>
               <h3>{s.serviceType}</h3>
-              <p>Service ID: {s.serviceId}</p>
+              <p>Service ID: {s.id}</p>                                                  {/* ← s.serviceId → s.id */}
             </div>
           ))}
         </div>

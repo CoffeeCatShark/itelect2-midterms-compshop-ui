@@ -1,9 +1,10 @@
 // App.jsx
+// ==================================================================json-server --watch db.json
 // Root component. Owns all shared state and decides which top-level
 // view to render: auth login, customer portal, or staff dashboard.
-import { useState } from "react";
-
-import { useLocalStorage } from "./utils/useLocalStorage";
+import { useState, useEffect } from "react";  
+import axios from "axios";                   
+//import { useLocalStorage } from "./utils/useLocalStorage";
 import globalCss from "./styles/globalStyles";
 import { INITIAL_USERS, INITIAL_SERVICES, INITIAL_REQUESTS, INITIAL_ACTIVE } from "./data/initialData";
 
@@ -19,10 +20,28 @@ const MODE_APP      = "app";
 
 export default function App() {
   // ── Shared data state (single source of truth) ──────────────────────────
-  const [users,    setUsers]    = useLocalStorage("cs_users",    INITIAL_USERS);
-  const [services, setServices] = useLocalStorage("cs_services", INITIAL_SERVICES);
-  const [requests, setRequests] = useLocalStorage("cs_requests", INITIAL_REQUESTS);
-  const [active,   setActive]   = useLocalStorage("cs_active",   INITIAL_ACTIVE);
+const [users,    setUsers]    = useState([])
+const [services, setServices] = useState([])
+const [requests, setRequests] = useState([])
+const [active,   setActive]   = useState([])
+
+useEffect(() => {
+  axios.get('http://localhost:3000/users')
+    .then(res => setUsers(res.data))
+    .catch(err => console.log(err))
+
+  axios.get('http://localhost:3000/services')
+    .then(res => setServices(res.data))
+    .catch(err => console.log(err))
+
+  axios.get('http://localhost:3000/requests')
+    .then(res => setRequests(res.data))
+    .catch(err => console.log(err))
+
+  axios.get('http://localhost:3000/active')
+    .then(res => setActive(res.data))
+    .catch(err => console.log(err))
+}, [])
 
   // ── Session / routing state ─────────────────────────────────────────────
   const [mode,    setMode]    = useState(MODE_AUTH);

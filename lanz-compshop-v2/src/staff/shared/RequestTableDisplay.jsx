@@ -1,7 +1,7 @@
 // staff/shared/RequestTableDisplay.jsx
 // Admin view: searchable table of all requests with ability to
 // mark pending requests as active or delete them.
-
+import axios from 'axios'
 import { useState } from "react";
 import ConfirmModal from "../../components/ConfirmModal";
 import { formatTime, formatDate, genId } from "../../utils/helpers";
@@ -23,17 +23,23 @@ export default function RequestTableDisplay({
     )
     .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
 
-  const doDelete = (r) => {
-    setActive((prev) => prev.filter((a) => a.requestId !== r.requestId));
-    setRequests((prev) => prev.filter((x) => x.requestIndex !== r.requestIndex));
-    setConfirm(null);
-  };
+ const doDelete = (r) => {
+  axios.delete(`http://localhost:3000/requests/${r.id}`)
+    .then(() => {
+      setActive(prev => prev.filter(a => a.requestId !== r.id));
+      setRequests(prev => prev.filter(x => x.id !== r.id));
+      setConfirm(null);
+    })
+    .catch(err => console.log(err))
+};
 
-  const makeActive = (r) => {
-    if (!active.find((a) => a.requestId === r.requestId)) {
-      setActive((prev) => [...prev, { activeIndex: genId(), requestId: r.requestId }]);
-    }
-  };
+const makeActive = (r) => {
+  if (!active.find((a) => a.requestId === r.id)) {
+    axios.post('http://localhost:3000/active', { requestId: r.id })
+      .then(res => setActive(prev => [...prev, res.data]))
+      .catch(err => console.log(err))
+  }
+};
 
   return (
     <>
@@ -80,7 +86,7 @@ export default function RequestTableDisplay({
               </tr>
             ) : (
               filtered.map((r) => {
-                const isActive = active.find((a) => a.requestId === r.requestId);
+                const isActive = active.find((a) => a.requestId === r.id);
                 return (
                   <tr key={r.requestIndex}>
                     <td>{r.serviceType}</td>

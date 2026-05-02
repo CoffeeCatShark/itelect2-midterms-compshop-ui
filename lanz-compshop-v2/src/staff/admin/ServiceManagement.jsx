@@ -1,54 +1,61 @@
 // staff/admin/ServiceManagement.jsx
-// Admin can add, edit, and delete services offered to customers.
-
 import { useState } from "react";
+import axios from "axios";                    // ← add this
 import ConfirmModal from "../../components/ConfirmModal";
-import { genId } from "../../utils/helpers";
 
 export default function ServiceManagement({ services, setServices }) {
   const [confirm, setConfirm] = useState(null);
   const [formOpen, setFormOpen] = useState(false);
   const [editing, setEditing]   = useState(null);
-  const [form, setForm]         = useState({ serviceId: "", serviceType: "" });
+  const [form, setForm]         = useState({ serviceType: "" });
   const [alert, setAlert]       = useState(null);
 
   const openAdd = () => {
-    setForm({ serviceId: "", serviceType: "" });
+    setForm({ serviceType: "" });
     setEditing(null);
     setFormOpen(true);
   };
 
   const openEdit = (s) => {
-    setForm({ serviceId: String(s.serviceId), serviceType: s.serviceType });
+    setForm({ serviceType: s.serviceType });
     setEditing(s);
     setFormOpen(true);
   };
 
   const save = () => {
-    if (!form.serviceId || !form.serviceType) return;
+    if (!form.serviceType) return;
+
     if (editing) {
-      setServices((prev) =>
-        prev.map((s) =>
-          s.serviceIndex === editing.serviceIndex
-            ? { ...s, serviceId: parseInt(form.serviceId), serviceType: form.serviceType }
-            : s
-        )
-      );
-      setAlert({ type: "success", msg: "Service updated." });
+      axios.put(`http://localhost:3000/services/${editing.id}`, {
+        serviceType: form.serviceType
+      })
+      .then(res => {
+        setServices(prev => prev.map(s => s.id === res.data.id ? res.data : s));
+        setAlert({ type: "success", msg: "Service updated." });
+        setFormOpen(false);
+      })
+      .catch(err => console.log(err))
     } else {
-      setServices((prev) => [
-        ...prev,
-        { serviceIndex: genId(), serviceId: parseInt(form.serviceId), serviceType: form.serviceType },
-      ]);
-      setAlert({ type: "success", msg: "Service added." });
+      axios.post('http://localhost:3000/services', {
+        serviceType: form.serviceType
+      })
+      .then(res => {
+        setServices(prev => [...prev, res.data]);
+        setAlert({ type: "success", msg: "Service added." });
+        setFormOpen(false);
+      })
+      .catch(err => console.log(err))
     }
-    setFormOpen(false);
   };
 
   const doDelete = (s) => {
-    setServices((prev) => prev.filter((x) => x.serviceIndex !== s.serviceIndex));
-    setAlert({ type: "success", msg: `Service "${s.serviceType}" deleted.` });
-    setConfirm(null);
+    axios.delete(`http://localhost:3000/services/${s.id}`)
+      .then(() => {
+        setServices(prev => prev.filter(x => x.id !== s.id));
+        setAlert({ type: "success", msg: `Service "${s.serviceType}" deleted.` });
+        setConfirm(null);
+      })
+      .catch(err => console.log(err))
   };
 
   return (
@@ -74,32 +81,19 @@ export default function ServiceManagement({ services, setServices }) {
         </div>
       )}
 
-      {/* Add / Edit form */}
       {formOpen && (
         <div className="form-card" style={{ marginBottom: 24 }}>
           <div className="table-title" style={{ marginBottom: 20 }}>
             {editing ? "✏️ Edit Service" : "➕ Add New Service"}
           </div>
-          <div className="form-row">
-            <div className="form-group">
-              <label className="form-label">Service ID</label>
-              <input
-                className="form-input"
-                type="number"
-                placeholder="e.g. 105"
-                value={form.serviceId}
-                onChange={(e) => setForm((p) => ({ ...p, serviceId: e.target.value }))}
-              />
-            </div>
-            <div className="form-group">
-              <label className="form-label">Service Type</label>
-              <input
-                className="form-input"
-                placeholder="e.g. Printing"
-                value={form.serviceType}
-                onChange={(e) => setForm((p) => ({ ...p, serviceType: e.target.value }))}
-              />
-            </div>
+          <div className="form-group">
+            <label className="form-label">Service Type</label>
+            <input
+              className="form-input"
+              placeholder="e.g. Printing"
+              value={form.serviceType}
+              onChange={(e) => setForm((p) => ({ ...p, serviceType: e.target.value }))}
+            />
           </div>
           <div className="form-actions">
             <button className="btn btn-primary" onClick={save}>💾 Save</button>
@@ -108,7 +102,6 @@ export default function ServiceManagement({ services, setServices }) {
         </div>
       )}
 
-      {/* Table */}
       <div className="table-wrap">
         <div className="table-toolbar">
           <span className="table-title">Services</span>
@@ -117,7 +110,7 @@ export default function ServiceManagement({ services, setServices }) {
 
         <table>
           <thead>
-            <tr><th>Service ID</th><th>Service Type</th><th>Actions</th></tr>
+            <tr><th>ID</th><th>Service Type</th><th>Actions</th></tr>
           </thead>
           <tbody>
             {services.length === 0 ? (
@@ -131,8 +124,8 @@ export default function ServiceManagement({ services, setServices }) {
               </tr>
             ) : (
               services.map((s) => (
-                <tr key={s.serviceIndex}>
-                  <td className="td-muted">{s.serviceId}</td>
+                <tr key={s.id}>                          {/* ← s.serviceIndex → s.id */}
+                  <td className="td-muted">{s.id}</td>  {/* ← s.serviceId → s.id */}
                   <td>{s.serviceType}</td>
                   <td style={{ display: "flex", gap: 6 }}>
                     <button className="btn btn-ghost btn-sm" onClick={() => openEdit(s)}>✏️ Edit</button>
